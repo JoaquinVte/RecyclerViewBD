@@ -1,5 +1,7 @@
 package com.example.myrecyclerviewexample.model;
 
+import androidx.annotation.Nullable;
+
 public class Oficio {
     private int idOficio;
     private String descripcion;
@@ -22,5 +24,19 @@ public class Oficio {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if(obj instanceof Oficio){
+            Oficio o = (Oficio) obj;
+            return o.idOficio==idOficio;
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return  descripcion ;
     }
 }

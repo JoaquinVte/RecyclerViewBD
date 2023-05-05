@@ -42,6 +42,23 @@ public class MysqlDB {
         return usuarios;
     }
 
+    public Usuario updateUsuario(Usuario u){
+        String sql = "UPDATE Usuario " +
+                "SET nombre='" + u.getNombre() +"', apellidos='"+u.getApellidos()+"', Oficio_idOficio="+u.getOficio() +
+                " WHERE idUsuario="+u.getIdUsuario();
+        try(Connection c = getConnection();
+        Statement stmt = c.createStatement();
+        ) {
+
+            if(stmt.executeUpdate(sql)==1)
+                return u;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
     public List<Oficio> getAllOficios() {
         List<Oficio> oficios = new ArrayList<>();
 
