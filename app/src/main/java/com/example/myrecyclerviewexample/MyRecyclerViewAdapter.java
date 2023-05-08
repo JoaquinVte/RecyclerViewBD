@@ -23,8 +23,11 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     private final LayoutInflater inflater;
     private View.OnClickListener onClickListener;
 
+    private Context context;
+
     public MyRecyclerViewAdapter(Context context){
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.context = context;
         list = new ArrayList<>();
     }
 
@@ -40,7 +43,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        List<Oficio> oficios = Model.getInstance().getOficios();
+        List<Oficio> oficios = Model.getInstance(context).getOficios();
 
         Usuario u = list.get(position);
         holder.title.setText(u.getApellidos().concat(", ").concat(u.getNombre()));

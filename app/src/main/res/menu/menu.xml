@@ -1,0 +1,20 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/overflowMenu"
+        android:icon="@drawable/baseline_more_vert_24"
+        android:title=""
+        app:showAsAction="always">
+
+        <menu>
+            <item
+                android:id="@+id/configuracion"
+                android:icon="@drawable/baseline_settings_24"
+                android:title="Settings" />
+            <item
+                android:id="@+id/exit"
+                android:icon="@drawable/baseline_exit_to_app_24"
+                android:title="Exit" />
+        </menu>
+    </item>
+</menu>

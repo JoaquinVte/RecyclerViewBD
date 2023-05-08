@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -60,12 +62,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
 
-                Usuario u = Model.getInstance().getUsuarios().get(viewHolder.getAdapterPosition());
+                Usuario u = Model.getInstance(getApplicationContext()).getUsuarios().get(viewHolder.getAdapterPosition());
 
                 executeCall(new CallInterface() {
                     @Override
                     public void doInBackground() {
-                        Model.getInstance().removeUser(u);
+                        Model.getInstance(getApplicationContext()).removeUser(u);
                     }
 
                     @Override
@@ -79,7 +81,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                                         executeCall(new CallInterface() {
                                             @Override
                                             public void doInBackground() {
-                                                Model.getInstance().insertUsuario(u);
+                                                Model.getInstance(getApplicationContext()).insertUsuario(u);
                                             }
 
                                             @Override
@@ -130,7 +132,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void onClick(View view) {
-        Usuario u = Model.getInstance().getUsuarios().get(recyclerView.getChildAdapterPosition(view));
+        Usuario u = Model.getInstance(getApplicationContext()).getUsuarios().get(recyclerView.getChildAdapterPosition(view));
 
         Intent intent = new Intent(getApplicationContext(),DetailActivity.class);
         intent.putExtra("mode",DetailActivity.MODE.UPDATE.toString());
@@ -142,13 +144,32 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void doInBackground() {
-        Model.getInstance().loadDataFromDB();
+        Model.getInstance(getApplicationContext()).loadDataFromDB();
     }
 
     @Override
     public void doInUI() {
         hideProgress();
-        List<Usuario> usuarioList = Model.getInstance().getUsuarios();
+        List<Usuario> usuarioList = Model.getInstance(getApplicationContext()).getUsuarios();
         myRecyclerViewAdapter.setUsuarios(usuarioList);
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case (R.id.configuracion):
+                Intent intentPreferenciasActivity = new Intent(this, PreferenceActivity.class);
+                startActivity(intentPreferenciasActivity);
+                return true;
+            case (R.id.exit):
+                finish();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

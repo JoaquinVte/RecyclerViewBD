@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Base de datos">
+
+        <EditTextPreference
+            android:defaultValue="10.13.1.1"
+            android:key="etpIP"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="IP"
+            app:summary="Direccion IP del SGBD" />
+        <EditTextPreference
+            android:defaultValue="3306"
+            android:key="etpPort"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Port"
+            app:summary="Puerto de acceso" />
+        <EditTextPreference
+            android:defaultValue="java"
+            android:key="etpSchema"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Schema"
+            app:summary="Schema de la BBDD" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Credenciales">
+        <EditTextPreference
+            android:defaultValue="jalonso"
+            android:key="etpUser"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Usuario" />
+        <EditTextPreference
+            android:defaultValue="1111"
+            android:key="etpPassword"
+            android:title="Password"
+            app:summary="Password de acceso para el usuario" />
+    </PreferenceCategory>
+</PreferenceScreen>

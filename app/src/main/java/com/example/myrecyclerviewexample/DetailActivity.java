@@ -53,7 +53,7 @@ public class DetailActivity extends BaseActivity {
         spinnerOficio = findViewById(R.id.spinnerOficio);
         imageViewOficio = findViewById(R.id.imageViewOficio);
 
-        ArrayAdapter<Oficio> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Model.getInstance().getOficios());
+        ArrayAdapter<Oficio> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Model.getInstance(getApplicationContext()).getOficios());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerOficio.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -75,7 +75,7 @@ public class DetailActivity extends BaseActivity {
                 tietNombre.setText(usuario.getNombre());
                 tietApellidos.setText(usuario.getApellidos());
                 setImage(usuario.getIdUsuario());
-                spinnerOficio.setSelection(Model.getInstance().getOficios().indexOf(new Oficio(usuario.getOficio(),"")));
+                spinnerOficio.setSelection(Model.getInstance(getApplicationContext()).getOficios().indexOf(new Oficio(usuario.getOficio(),"")));
                 btnCreate.setVisibility(View.GONE);
                 break;
             case CREATE:
@@ -96,7 +96,7 @@ public class DetailActivity extends BaseActivity {
                         boolean actualizado;
                         @Override
                         public void doInBackground() {
-                            actualizado = Model.getInstance().updateUsuario(new Usuario(usuario.getIdUsuario(), tietNombre.getText().toString(),tietApellidos.getText().toString(),((Oficio)spinnerOficio.getSelectedItem()).getIdOficio()));
+                            actualizado = Model.getInstance(getApplicationContext()).updateUsuario(new Usuario(usuario.getIdUsuario(), tietNombre.getText().toString(),tietApellidos.getText().toString(),((Oficio)spinnerOficio.getSelectedItem()).getIdOficio()));
                         }
 
                         @Override
@@ -128,7 +128,7 @@ public class DetailActivity extends BaseActivity {
                            Oficio oficio = (Oficio) spinnerOficio.getSelectedItem();
 
                            u = new Usuario(nombre,apellidos,oficio.getIdOficio());
-                           u = Model.getInstance().insertUsuario(u);
+                           u = Model.getInstance(getApplicationContext()).insertUsuario(u);
 
                        }
 

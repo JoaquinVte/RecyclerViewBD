@@ -1,5 +1,7 @@
 package com.example.myrecyclerviewexample.model;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -7,20 +9,22 @@ import java.util.List;
 public class Model {
 
     private static Model model;
+    private static Context context;
     private MysqlDB mysqlDB;
     private List<Usuario> usuarios;
     private List<Oficio> oficios;
 
-    private Model() {
+    private Model(Context context) {
         usuarios = new ArrayList<>();
         oficios = new ArrayList<>();
-        mysqlDB = new MysqlDB();
+        mysqlDB = new MysqlDB(context);
     }
 
 
-    public static Model getInstance() {
+    public static Model getInstance(Context c) {
         if (model == null)
-            model = new Model();
+            model = new Model(c);
+
 
         return model;
     }
