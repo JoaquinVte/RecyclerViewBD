@@ -2,6 +2,7 @@ package com.example.myrecyclerviewexample.model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -17,7 +18,7 @@ public class MysqlDB {
             throw new RuntimeException(e);
         }
 
-        return DriverManager.getConnection("jdbc:mysql://10.13.1.1:3306/java","jalonso","1111");
+        return DriverManager.getConnection("jdbc:mysql://192.168.1.53:3306/java","jalonso","1111");
     }
 
     public List<Usuario> getAllUsers(){
@@ -59,6 +60,75 @@ public class MysqlDB {
         return null;
     }
 
+    public Usuario insertUsuario(Usuario u){
+        return (u.getIdUsuario()==null)?insertUsuarioWithoutId(u):insertUsuarioWithId(u);
+    }
+
+    private Usuario insertUsuarioWithId(Usuario u){
+        String sql = "INSERT INTO Usuario (idUsuario,nombre,apellidos,Oficio_idOficio) VALUES (?,?,?,?)";
+        try(Connection connection = getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            int pos=0;
+            statement.setInt(++pos,u.getIdUsuario());
+            statement.setString(++pos,u.getNombre());
+            statement.setString(++pos,u.getApellidos());
+            statement.setInt(++pos,u.getOficio());
+
+            if( statement.executeUpdate() == 0 )
+                throw new SQLException("Ninguna fila afectada a la hora de crear el usuario.");
+
+            return u;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Usuario insertUsuarioWithoutId(Usuario u){
+        String sql = "INSERT INTO Usuario (nombre,apellidos,Oficio_idOficio) VALUES (?,?,?)";
+        try(Connection connection = getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS)) {
+
+            statement.setString(1,u.getNombre());
+            statement.setString(2,u.getApellidos());
+            statement.setInt(3,u.getOficio());
+
+            if( statement.executeUpdate() == 0 )
+                throw new SQLException("Ninguna fila afectada a la hora de crear el usuario.");
+
+            try(ResultSet rs = statement.getGeneratedKeys()){
+
+                if(rs.next())
+                    u.setIdUsuario(rs.getInt(1));
+                else
+                    throw new SQLException("No obtenida el id asignado");
+            }
+
+            return u;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Usuario removeUser(Usuario u) {
+        String sql = "DELETE FROM Usuario " +
+                " WHERE idUsuario="+u.getIdUsuario();
+        try(Connection c = getConnection();
+            Statement stmt = c.createStatement();
+        ) {
+
+            if(stmt.executeUpdate(sql)==1)
+                return u;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+
     public List<Oficio> getAllOficios() {
         List<Oficio> oficios = new ArrayList<>();
 
@@ -81,4 +151,6 @@ public class MysqlDB {
         }
         return oficios;
     }
+
+
 }

@@ -1,7 +1,5 @@
 package com.example.myrecyclerviewexample;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -20,6 +18,7 @@ import com.example.myrecyclerviewexample.base.BaseActivity;
 import com.example.myrecyclerviewexample.base.CallInterface;
 import com.example.myrecyclerviewexample.model.Model;
 import com.example.myrecyclerviewexample.model.Usuario;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
@@ -27,14 +26,18 @@ import java.util.List;
 public class MainActivity extends BaseActivity implements View.OnClickListener, CallInterface {
 
     private RecyclerView recyclerView;
-    private ActivityResultLauncher<Intent> detailActivityLauncher;
+    private ActivityResultLauncher<Intent> detailActivityLauncherForUpdate;
+    private ActivityResultLauncher<Intent> detailActivityLauncherForInsert;
     private MyRecyclerViewAdapter myRecyclerViewAdapter;
+
+    private FloatingActionButton fabAdd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         recyclerView = findViewById(R.id.recycler);
+        fabAdd = findViewById(R.id.fabAdd);
 
         myRecyclerViewAdapter = new MyRecyclerViewAdapter(this);
         myRecyclerViewAdapter.setOnClickListener(this);
@@ -59,29 +62,67 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
                 Usuario u = Model.getInstance().getUsuarios().get(viewHolder.getAdapterPosition());
 
-                myRecyclerViewAdapter.notifyItemRemoved(position);
+                executeCall(new CallInterface() {
+                    @Override
+                    public void doInBackground() {
+                        Model.getInstance().removeUser(u);
+                    }
 
-                Snackbar.make(recyclerView, "Deleted " + u.getNombre(), Snackbar.LENGTH_LONG)
-                        .setAction("Undo", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
+                    @Override
+                    public void doInUI() {
+                        myRecyclerViewAdapter.notifyItemRemoved(position);
 
-                                myRecyclerViewAdapter.notifyItemInserted(position);
-                            }
-                        })
-                        .show();
+                        Snackbar.make(recyclerView, "Deleted " + u.getNombre(), Snackbar.LENGTH_LONG)
+                                .setAction("Undo", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        executeCall(new CallInterface() {
+                                            @Override
+                                            public void doInBackground() {
+                                                Model.getInstance().insertUsuario(u);
+                                            }
+
+                                            @Override
+                                            public void doInUI() {
+                                                myRecyclerViewAdapter.notifyItemInserted(position);
+                                            }
+                                        });
+
+                                    }
+                                })
+                                .show();
+                    }
+                });
+
             }
         });
 
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
 
-        detailActivityLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+        detailActivityLauncherForUpdate = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    if(result.getResultCode()== Activity.RESULT_OK)
+                    if(result.getResultCode()== Activity.RESULT_OK){
                         myRecyclerViewAdapter.notifyDataSetChanged();
+                        Toast.makeText(getApplicationContext(),"Usuario actualizdo.",Toast.LENGTH_LONG).show();
+                    }
+
                 }
         );
+
+        detailActivityLauncherForInsert = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if(result.getResultCode()== Activity.RESULT_OK){
+                        myRecyclerViewAdapter.notifyDataSetChanged();
+                        Toast.makeText(getApplicationContext(),"Usuario creado.",Toast.LENGTH_LONG).show();
+                    }
+                });
+
+        fabAdd.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(),DetailActivity.class);
+            intent.putExtra("mode",DetailActivity.MODE.CREATE.toString());
+            detailActivityLauncherForInsert.launch(intent);
+        });
 
         showProgress();
         executeCall(this);
@@ -94,17 +135,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         Intent intent = new Intent(getApplicationContext(),DetailActivity.class);
         intent.putExtra("mode",DetailActivity.MODE.UPDATE.toString());
         intent.putExtra("user",u);
-        detailActivityLauncher.launch(intent);
+        detailActivityLauncherForUpdate.launch(intent);
 
 //        Toast.makeText(this,"Clic en " + u.getOficio(),Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void doInBackground() {
-
-        Model.getInstance().getUsuarios();
-        Model.getInstance().getOficios();
-
+        Model.getInstance().loadDataFromDB();
     }
 
     @Override

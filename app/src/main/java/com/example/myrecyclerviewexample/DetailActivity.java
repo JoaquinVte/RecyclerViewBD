@@ -67,8 +67,6 @@ public class DetailActivity extends BaseActivity {
 
             }
         });
-
-
         spinnerOficio.setAdapter(adapter);
 
         switch (mode){
@@ -118,20 +116,40 @@ public class DetailActivity extends BaseActivity {
 
         btnCreate.setOnClickListener(
                 v -> {
+                    showProgress();
                    executeCall(new CallInterface() {
+
+                       Usuario u;
+
                        @Override
                        public void doInBackground() {
+                           String nombre = tietNombre.getText().toString();
+                           String apellidos = tietApellidos.getText().toString();
+                           Oficio oficio = (Oficio) spinnerOficio.getSelectedItem();
+
+                           u = new Usuario(nombre,apellidos,oficio.getIdOficio());
+                           u = Model.getInstance().insertUsuario(u);
 
                        }
 
                        @Override
                        public void doInUI() {
+                            if (u!=null) {
 
+                                Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                                setResult(RESULT_OK);
+                                finish();
+
+                            }else
+                                Toast.makeText(getApplicationContext(),"Algo ha ido mal. Revisa los campos",Toast.LENGTH_LONG).show();
                        }
                    });
                 }
         );
     }
+
+
+
     private void setImage(int idOficio) {
         switch (idOficio) {
             case 1:

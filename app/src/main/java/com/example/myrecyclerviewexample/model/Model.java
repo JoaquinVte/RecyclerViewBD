@@ -1,6 +1,7 @@
 package com.example.myrecyclerviewexample.model;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class Model {
@@ -22,6 +23,11 @@ public class Model {
             model = new Model();
 
         return model;
+    }
+
+    public void loadDataFromDB(){
+        getUsuarios();
+        getOficios();
     }
 
     public List<Usuario> getUsuarios() {
@@ -51,5 +57,20 @@ public class Model {
             return true;
         }
         return false;
+    }
+    public Usuario insertUsuario(Usuario u){
+        Usuario usuario = mysqlDB.insertUsuario(u);
+        if (usuario!=null) {
+            usuarios.add(usuario);
+            usuarios.sort(Comparator.comparingInt(Usuario::getIdUsuario));
+        }
+        return usuario;
+    }
+
+    public Usuario removeUser(Usuario u) {
+        Usuario usuario = mysqlDB.removeUser(u);
+        if(usuario!=null)
+            usuarios.remove(usuario);
+        return usuario;
     }
 }

@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 public class Usuario implements Serializable {
 
-    private int idUsuario;
+    private Integer idUsuario;
     private String nombre;
     private String apellidos;
     private int oficio;
@@ -18,6 +18,11 @@ public class Usuario implements Serializable {
         this.oficio = oficio;
     }
 
+    public Usuario(String nombre, String apellidos, int oficio) {
+        this.nombre = nombre;
+        this.apellidos = apellidos;
+        this.oficio = oficio;
+    }
 
     public String getNombre() {
         return nombre;
@@ -31,11 +36,11 @@ public class Usuario implements Serializable {
         return oficio;
     }
 
-    public int getIdUsuario() {
+    public Integer getIdUsuario() {
         return idUsuario;
     }
 
-    public void setIdUsuario(int idUsuario) {
+    public void setIdUsuario(Integer idUsuario) {
         this.idUsuario = idUsuario;
     }
 
